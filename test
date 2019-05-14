@@ -1,4 +1,4 @@
 this is a  test on git push:
 to push:
     git commit(can commit multiple files before the push)
-    git push (which will push all the committed files)
+    git push (which can push all the committed files)
