@@ -50,8 +50,8 @@ TEST(BStream, output) {
   std::string filename{"test_bstream_output"};
   std::ofstream ofs(filename);
   BinaryOutputStream bos(ofs);
-  bos.PutChar('X');
-  bos.PutChar('A');
+//  bos.PutChar('X');
+//  bos.PutChar('A');
   bos.PutInt(440);
 
   ofs.close();
@@ -59,12 +59,18 @@ TEST(BStream, output) {
   std::ifstream ifs(filename);
   char test_char;
   int test_int;
+//  ifs.get(test_char);
+//  EXPECT_EQ(test_char, 'X');
+//  ifs.get(test_char);
+//  EXPECT_EQ(test_char, 'A');
   ifs.get(test_char);
-  EXPECT_EQ(test_char, 'X');
+  EXPECT_EQ(test_char, 440);
   ifs.get(test_char);
-  EXPECT_EQ(test_char, 'A');
-  ifs >> test_int;
-  EXPECT_EQ(test_int, 440);
+  EXPECT_EQ(test_char, 440);
+  ifs.get(test_char);
+  EXPECT_EQ(test_char, 440);
+  ifs.get(test_char);
+  EXPECT_EQ(test_char, 440);
 
   std::remove(filename.c_str());
 }

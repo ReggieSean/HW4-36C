@@ -152,13 +152,18 @@ void BinaryOutputStream::PutInt(int word) {
   i can not test if they are in the right order,
   somehow google test always shows the value is 0, I think another
   way of extracting int from file is needed*/
-  char byte;
-  for (int i = 0; i < 4; i++){
-    byte = ((word >> (i*8))&0xFF);
-    std::cout << byte << " test" << std::endl;
-    PutChar(byte);
-  }
+//  char byte;
+//  for (int i = 0; i < 4; i++){
+//    byte = ((word >> ((3-i) * 8)) & 0xFF);
+//    std::cout << byte << " test" << std::endl;
+//    PutChar(byte);
+//  }
   // To be completed
+  bool bit;
+  for (int i = 0; i < 32; i++) {
+    bit = word >> (31 - i) & 1U;
+    PutBit(bit);
+  }
 }
 
 #endif  // BSTREAM_H_
