@@ -1,1 +1,4 @@
-this is a  test on git push
+this is a  test on git push:
+to push:
+    git commit
+    git push (which will push all the committed files)
