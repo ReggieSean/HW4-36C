@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <fstream>
 #include <iostream>
+#include <bitset>
 
 class BinaryInputStream {
  public:
@@ -52,11 +53,23 @@ bool BinaryInputStream::GetBit() {
 }
 
 char BinaryInputStream::GetChar() {
-  // To be completed
+  char byte = 0;
+  for (int i = 0; i < 8; i++) {
+    //byte = byte << 1;
+    byte |= GetBit() << (7-i);
+  }
+  return byte;
 }
 
 int BinaryInputStream::GetInt() {
   // To be completed
+  int four_bytes = 0;
+
+
+  for (int i = 0; i < 4; i++) {
+    four_bytes |= GetChar() << ((3-i) * 8);
+  }
+  return four_bytes;
 }
 
 class BinaryOutputStream {
@@ -106,7 +119,7 @@ void BinaryOutputStream::FlushBuffer() {
   count = 0;
 }
 
-void BinaryOutputStream::PutBit(bool bit) {
+void BinaryOutputStream::PutBit(bool bit) { //not sure how to test a bit
   // Make some space and add bit to buffer
   buffer <<= 1;
   if (bit)
@@ -118,10 +131,33 @@ void BinaryOutputStream::PutBit(bool bit) {
 }
 
 void BinaryOutputStream::PutChar(char byte) {
-  // To be completed
+  // putchar is working fine
+  buffer = 0;
+  bool bit;
+  for (int i = 0; i < 8; i++){
+    bit = (byte >> i) & 1U;
+    if (bit) {
+      buffer |= 1 << i;
+    } else {
+      buffer |= 0 << i;
+    }
+    count++;
+  }
+  FlushBuffer();
 }
 
 void BinaryOutputStream::PutInt(int word) {
+  /*two potential problems here:
+  even the function is outputing binary data into the file
+  i can not test if they are in the right order,
+  somehow google test always shows the value is 0, I think another
+  way of extracting int from file is needed*/
+  char byte;
+  for (int i = 0; i < 4; i++){
+    byte = ((word >> (i*8))&0xFF);
+    std::cout << byte << " test" << std::endl;
+    PutChar(byte);
+  }
   // To be completed
 }
 

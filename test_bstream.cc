@@ -41,6 +41,34 @@ TEST(BStream, input) {
   std::remove(filename.c_str());
 }
 
+TEST(BStream, output) {
+  /*Since PutChar takes an char as parameter and
+  Put Int takes an int as parameter, we can simply
+  call them with dedicated characters and integers
+  then open the file that was written and check
+  the values that are outputed by the class*/
+  std::string filename{"test_bstream_output"};
+  std::ofstream ofs(filename);
+  BinaryOutputStream bos(ofs);
+  bos.PutChar('X');
+  bos.PutChar('A');
+  bos.PutInt(440);
+
+  ofs.close();
+
+  std::ifstream ifs(filename);
+  char test_char;
+  int test_int;
+  ifs.get(test_char);
+  EXPECT_EQ(test_char, 'X');
+  ifs.get(test_char);
+  EXPECT_EQ(test_char, 'A');
+  ifs >> test_int;
+  EXPECT_EQ(test_int, 440);
+
+  std::remove(filename.c_str());
+}
+
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
