@@ -104,15 +104,24 @@ TEST(BStream, outandin) {
 
   ofs.close();
 
-  std::ifstream ifs(filename, std::ifstream::binary);
-  char test_char;
+  std::ifstream ifs(filename, std::ios::in |
+      std::ios::binary);
+  BinaryInputStream bis(ifs);
+
+  EXPECT_EQ(bis.GetChar(),0x58 );
+  EXPECT_EQ(bis.GetChar(), 0x41);
+  EXPECT_EQ(bis.GetInt(), 0x000001B8);
+//  EXPECT_EQ(bis.GetChar(), 0x1B8);
+//  EXPECT_EQ(bis.GetChar(), 0x1B8);
+//  EXPECT_EQ(bis.GetChar(), 0x1B8);
+  //char test_char;
   //int test_int;
   // std::bitset<32> y(test_int);
   // std::cout << y << " test3" << std::endl;
-  ifs.get(test_char);
-  EXPECT_EQ(test_char, 'X');
-  ifs.get(test_char);
-  EXPECT_EQ(test_char, 'A');
+  //ifs.get(test_char);
+  //EXPECT_EQ(test_char, 'X');
+  //ifs.get(test_char);
+  //EXPECT_EQ(test_char, 'A');
 }
 
 int main(int argc, char *argv[]) {

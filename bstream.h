@@ -160,7 +160,6 @@ void BinaryOutputStream::PutInt(int word) {
     // std::cout << x << " test2" << std::endl;
     PutChar(byte);
   }
-  // To be completed
   /*bool bit;
   for (int i = 0; i < 32; i++) {
     bit = word >> (31 - i) & 1;
