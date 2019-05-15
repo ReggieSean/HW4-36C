@@ -35,6 +35,8 @@ TEST(BStream, input) {
   EXPECT_EQ(bis.GetChar(), 0x42); // 01000010
   EXPECT_EQ(bis.GetBit(), 1);
   EXPECT_EQ(bis.GetInt(), 0x58400276); // 01011000010000000000001001110110
+// 1110110 00000010 01000000 01011000 : 1979859032
+// 1011000 01000000 00000010 01110110 : 1480589942
 
   ifs.close();
 
@@ -58,7 +60,7 @@ TEST(BStream, output) {
 
   std::ifstream ifs(filename, std::ifstream::binary);
   char test_char;
-  //int test_int;
+  int test_int;
   // std::bitset<32> y(test_int);
   // std::cout << y << " test3" << std::endl;
   ifs.get(test_char);
@@ -66,12 +68,12 @@ TEST(BStream, output) {
   ifs.get(test_char);
   EXPECT_EQ(test_char, 'A');
 
-  //ifs.read(reinterpret_cast<char*>(&test_int), sizeof(int));
+//  ifs.read(reinterpret_cast<char*>(&test_int), sizeof(int));
 //  EXPECT_EQ(test_int, 440);
-  //std::bitset<32> z(test_int);
-  //std::cout << z << " test4" << std::endl;
-  // EXPECT_EQ(test_int, 440);
-
+//  std::bitset<32> z(test_int);
+//  std::cout << z << " test4" << std::endl;
+//   EXPECT_EQ(test_int, 440);
+//
   ifs.get(test_char);
   std::bitset<8> z(test_char);
   //std::cout << z0 << " test4" << std::endl;
@@ -100,20 +102,25 @@ TEST(BStream, outandin) {
   BinaryOutputStream bos(ofs);
   bos.PutChar('X');
   bos.PutChar('A');
-  bos.PutInt(440); // equals to 00000000000000000000000110111000 in binary form
+  bos.PutInt(-89818203); // equals to 11111010 10100101 01111011 10100101 in binary form
 
   ofs.close();
 
   std::ifstream ifs(filename, std::ios::in |
       std::ios::binary);
   BinaryInputStream bis(ifs);
-
-  EXPECT_EQ(bis.GetChar(),0x58 );
+  EXPECT_EQ(bis.GetChar(), 0x58);
   EXPECT_EQ(bis.GetChar(), 0x41);
-  EXPECT_EQ(bis.GetInt(), 0x000001B8);
-//  EXPECT_EQ(bis.GetChar(), 0x1B8);
-//  EXPECT_EQ(bis.GetChar(), 0x1B8);
-//  EXPECT_EQ(bis.GetChar(), 0x1B8);
+  std::bitset<8> z(bis.GetChar());
+  EXPECT_EQ(z, 0xFA);
+  std::bitset<8> z1(bis.GetChar());
+  EXPECT_EQ(z1, 0xA5);
+  std::bitset<8> z2(bis.GetChar());
+  EXPECT_EQ(z2, 0x7B);
+  std::bitset<8> z3(bis.GetChar());
+  EXPECT_EQ(z3, 0xA5);
+
+
   //char test_char;
   //int test_int;
   // std::bitset<32> y(test_int);
