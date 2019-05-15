@@ -65,30 +65,54 @@ TEST(BStream, output) {
   EXPECT_EQ(test_char, 'X');
   ifs.get(test_char);
   EXPECT_EQ(test_char, 'A');
+
   //ifs.read(reinterpret_cast<char*>(&test_int), sizeof(int));
 //  EXPECT_EQ(test_int, 440);
   //std::bitset<32> z(test_int);
   //std::cout << z << " test4" << std::endl;
   // EXPECT_EQ(test_int, 440);
+
   ifs.get(test_char);
   std::bitset<8> z(test_char);
   //std::cout << z0 << " test4" << std::endl;
-  EXPECT_EQ(z, 00000000);
+  EXPECT_EQ(z, 0);
   ifs.get(test_char);
   std::bitset<8> z1(test_char);
   // std::cout << z2 << " test5" << std::endl;
-  EXPECT_EQ(z1, 00000000);
+  EXPECT_EQ(z1, 0);
   ifs.get(test_char);
   std::bitset<8> z2(test_char);
-  EXPECT_EQ(z2, 00000001);
+  EXPECT_EQ(z2, 1);
   // std::cout << z << " test6" << std::endl;
   ifs.get(test_char);
   std::cout << test_char << " test7" << std::endl;
   std::bitset<8> z3(test_char);
   std::cout << z3 << " test7" << std::endl;
-  EXPECT_EQ(z3, 10111000);
+   EXPECT_EQ(z3, 0xB8);
 
   std::remove(filename.c_str());
+}
+
+
+TEST(BStream, outandin) {
+  std::string filename{"test_bstream_output"};
+  std::ofstream ofs(filename);
+  BinaryOutputStream bos(ofs);
+  bos.PutChar('X');
+  bos.PutChar('A');
+  bos.PutInt(440); // equals to 00000000000000000000000110111000 in binary form
+
+  ofs.close();
+
+  std::ifstream ifs(filename, std::ifstream::binary);
+  char test_char;
+  //int test_int;
+  // std::bitset<32> y(test_int);
+  // std::cout << y << " test3" << std::endl;
+  ifs.get(test_char);
+  EXPECT_EQ(test_char, 'X');
+  ifs.get(test_char);
+  EXPECT_EQ(test_char, 'A');
 }
 
 int main(int argc, char *argv[]) {
