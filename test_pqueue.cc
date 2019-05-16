@@ -15,6 +15,12 @@ TEST(PQueue, less) {
   EXPECT_EQ(pq.Size(), 4);
   pq.Pop();
   EXPECT_EQ(pq.Top(), 23);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 34);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 42);
+  pq.Pop();
+  EXPECT_EQ(pq.Size(), 0);
 }
 
 TEST(PQueue, great) {
@@ -29,6 +35,12 @@ TEST(PQueue, great) {
   EXPECT_EQ(pq.Size(), 4);
   pq.Pop();
   EXPECT_EQ(pq.Top(), 34);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 23);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 2);
+  pq.Pop();
+  EXPECT_EQ(pq.Size(), 0);
 }
 
 class MyClass {
