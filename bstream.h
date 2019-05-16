@@ -113,6 +113,9 @@ void BinaryOutputStream::FlushBuffer() {
 
   // Write to output stream
   ofs.put(buffer);
+  std::bitset<8> z(buffer);
+  // std::cout << "buffer " << z <<std::endl;
+  // std::cout << buffer << "test buffer" << std::endl;
 
   // Reset buffer
   buffer = 0;
@@ -124,7 +127,7 @@ void BinaryOutputStream::PutBit(bool bit) { //not sure how to test a bit
   buffer <<= 1;
   if (bit)
     buffer |= 1;
-
+  // std::cout << "a bit is put " << bit <<std::endl;
   // If buffer is full, write it
   if (++count == 8)
     FlushBuffer();
@@ -132,18 +135,23 @@ void BinaryOutputStream::PutBit(bool bit) { //not sure how to test a bit
 
 void BinaryOutputStream::PutChar(char byte) {
   // putchar is working fine
-  buffer = 0;
-  bool bit;
-  for (int i = 0; i < 8; i++){
-    bit = (byte >> i) & 1U;
-    if (bit) {
-      buffer |= 1 << i;
-    } else {
-      buffer |= 0 << i;
+  // bool bit;
+  // for (size_t i = 0; i < 8; i++) {
+  //   bit = (byte >> i) & 1U;
+  //   PutBit(bit);
+  // }
+  // buffer = 0;
+   // bool bit;
+   for (int i = 0; i < 8; i++){
+     PutBit((byte >> (7 - i) & 1));
+   //   if (bit) {
+   //     buffer |= 1 << i;
+   //   } else {
+   //     buffer |= 0 << i;
+   //   }
+   //   count++;
     }
-    count++;
-  }
-  FlushBuffer();
+   // FlushBuffer();
 }
 
 void BinaryOutputStream::PutInt(int word) {

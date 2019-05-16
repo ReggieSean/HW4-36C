@@ -60,7 +60,7 @@ TEST(BStream, output) {
 
   std::ifstream ifs(filename, std::ifstream::binary);
   char test_char;
-  int test_int;
+  // int test_int;
   // std::bitset<32> y(test_int);
   // std::cout << y << " test3" << std::endl;
   ifs.get(test_char);
