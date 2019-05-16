@@ -227,6 +227,7 @@ void Huffman::Decompress(std::ifstream& ifs, std::ofstream& ofs) {
   BinaryInputStream bis(ifs);
   HuffmanNode* root = ReconstructTree(bis);
   WriteIn(ofs, root, bis);
+  CleanUp(root);
 }
 
 HuffmanNode* Huffman::ReconstructTree(BinaryInputStream& bis){
@@ -243,6 +244,8 @@ HuffmanNode* Huffman::ReconstructTree(BinaryInputStream& bis){
 void Huffman::WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& bis) {
   BinaryOutputStream bos(ofs);
   int size = bis.GetInt();
+  std::bitset<32> z(size);
+  std::cout << z << " size" << std::endl;
   std::cout << size << " size" << std::endl;
   HuffmanNode* cur_node;
   for (int i = 0; i < size; i++) {
