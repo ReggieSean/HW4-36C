@@ -61,12 +61,16 @@ class Huffman {
   static void BuildSequence(std::string& all_char, std::map<char, std::string>&
      code_table, BinaryOutputStream& bos);
   static void CleanUp(HuffmanNode* n);
+  static HuffmanNode* ReconstructTree(BinaryInputStream& bis);
+  // static void RebuildCodeTable(HuffmanNode* n, std::map<char, std::string>&
+     // code_table, BinaryInputStream, bos);
+  static void WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& bis);
 };
 
 // To be completed below
 void Huffman::Compress(std::ifstream &ifs, std::ofstream &ofs){
   std::string all_char = std::string((std::istreambuf_iterator<char>(ifs)),
-   std::istreambuf_iterator<char>());
+  std::istreambuf_iterator<char>());
   std::map<char, int> freq = CountFrequency(ifs, all_char);
   // std::cout << "im here" <<std::endl;
   PQueue<HuffmanNode> HuffmanTree;
@@ -218,6 +222,48 @@ void Huffman::CleanUp(HuffmanNode* n){
   CleanUp(n->right());
   free(n);
 }
+
+void Huffman::Decompress(std::ifstream& ifs, std::ofstream& ofs) {
+  BinaryInputStream bis(ifs);
+  HuffmanNode* root = ReconstructTree(bis);
+  WriteIn(ofs, root, bis);
+}
+
+HuffmanNode* Huffman::ReconstructTree(BinaryInputStream& bis){
+  HuffmanNode* cur_node;
+  if (!bis.GetBit()) {
+    cur_node = new HuffmanNode(0, 0, ReconstructTree(bis), ReconstructTree(bis));
+    return cur_node;
+  } else {
+    cur_node = new HuffmanNode(bis.GetChar(), 0, nullptr, nullptr);
+    return cur_node;
+  }
+}
+
+void Huffman::WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& bis) {
+  BinaryOutputStream bos(ofs);
+  int size = bis.GetInt();
+  std::cout << size << " size" << std::endl;
+  HuffmanNode* cur_node;
+  for (int i = 0; i < size; i++) {
+    cur_node = root;
+    while (!cur_node->IsLeaf()){
+      if (bis.GetBit()){
+        cur_node = cur_node->right();
+      } else {
+        cur_node = cur_node->left();
+      }
+    }
+    char ch = cur_node->data();
+    std::cout << ch << " size" << std::endl;
+    bos.PutChar(ch);
+  }
+}
+
+
+
+
+
 
 
 #endif  // HUFFMAN_H_
