@@ -115,7 +115,7 @@ TEST(BStream, output) {
 }
 
 
-TEST(BStream, outandin) {
+TEST(BStream, UsingBisToTestBos) {
   std::string filename{"test_bstream_output"};
   std::ofstream ofs(filename);
   BinaryOutputStream bos(ofs);
@@ -132,17 +132,18 @@ TEST(BStream, outandin) {
   // the hex value for 'X' in ASCII table
   EXPECT_EQ(bis.GetChar(), 0x41);
   // the hex value for 'X' in ASCII table
-  std::bitset<8> z(bis.GetChar());
-  EXPECT_EQ(z, 0xFA);
-  // the hex value for 11111010
-  std::bitset<8> z1(bis.GetChar());
-  EXPECT_EQ(z1, 0xA5);
-  // the hex value for 10100101
-  std::bitset<8> z2(bis.GetChar());
-  EXPECT_EQ(z2, 0x7B);
-  // the hex value for 01111011
-  std::bitset<8> z3(bis.GetChar());
-  EXPECT_EQ(z3, 0xA5);
+  EXPECT_EQ(bis.GetInt(), -89818203);
+  // std::bitset<8> z(bis.GetChar());
+  // EXPECT_EQ(z, 0xFA);
+  // // the hex value for 11111010
+  // std::bitset<8> z1(bis.GetChar());
+  // EXPECT_EQ(z1, 0xA5);
+  // // the hex value for 10100101
+  // std::bitset<8> z2(bis.GetChar());
+  // EXPECT_EQ(z2, 0x7B);
+  // // the hex value for 01111011
+  // std::bitset<8> z3(bis.GetChar());
+  // EXPECT_EQ(z3, 0xA5);
   // the hex value for 10100101
 
 //  char test_char  = bis.GetChar();
@@ -157,6 +158,7 @@ TEST(BStream, outandin) {
   //EXPECT_EQ(test_char, 'X');
   //ifs.get(test_char);
   //EXPECT_EQ(test_char, 'A');
+  ifs.close();
 }
 
 int main(int argc, char *argv[]) {

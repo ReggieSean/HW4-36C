@@ -63,13 +63,12 @@ char BinaryInputStream::GetChar() {
 
 int BinaryInputStream::GetInt() {
   // To be completed
-  int four_bytes = 0;
+  int number = 0;
 
-
-  for (int i = 0; i < 4; i++) {
-    four_bytes |= GetChar() << ((3-i) * 8);
+  for (size_t i = 0; i < sizeof(int) * 8; i++) {
+    number |= GetBit() << (31-i);
   }
-  return four_bytes;
+  return number;
 }
 
 class BinaryOutputStream {

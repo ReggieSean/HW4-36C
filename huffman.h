@@ -246,7 +246,7 @@ void Huffman::WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& 
   int size = bis.GetInt();
   std::bitset<32> z(size);
   std::cout << z << " size" << std::endl;
-  std::cout << size << " size" << std::endl;
+  std::cout << size << std::endl;
   HuffmanNode* cur_node;
   for (int i = 0; i < size; i++) {
     cur_node = root;
