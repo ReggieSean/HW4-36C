@@ -27,11 +27,15 @@ TEST(BStream, input) {
   std::ifstream ifs(filename, std::ios::in |
                     std::ios::binary);
   BinaryInputStream bis(ifs);
-
+  char temp_char;
   // Make sure that we reading the binary in the correct order
   EXPECT_EQ(bis.GetBit(), 0);
   EXPECT_EQ(bis.GetBit(), 1);
-  EXPECT_EQ(bis.GetChar(), 0x62); // 01100010
+
+  temp_char = bis.GetChar();
+  std::cout<< temp_char << std::endl;
+
+  EXPECT_EQ(temp_char, 0x62); // 01100010
   EXPECT_EQ(bis.GetChar(), 0x42); // 01000010
   EXPECT_EQ(bis.GetBit(), 1);
   EXPECT_EQ(bis.GetInt(), 0x58400276); // 01011000010000000000001001110110
@@ -55,7 +59,7 @@ TEST(BStream, output) {
   bos.PutChar('X');
   bos.PutChar('A');
   bos.PutInt(440); // equals to 00000000000000000000000110111000 in binary form
-
+  bos.PutBit(1);
   ofs.close();
 
   std::ifstream ifs(filename, std::ifstream::binary);
@@ -78,19 +82,34 @@ TEST(BStream, output) {
   std::bitset<8> z(test_char);
   //std::cout << z0 << " test4" << std::endl;
   EXPECT_EQ(z, 0);
+  // z is 00000000 which equals to 0 in integer;
+
   ifs.get(test_char);
   std::bitset<8> z1(test_char);
   // std::cout << z2 << " test5" << std::endl;
   EXPECT_EQ(z1, 0);
+  // z1 is 00000000 which equals to 0 in integer;
   ifs.get(test_char);
   std::bitset<8> z2(test_char);
   EXPECT_EQ(z2, 1);
+  // z2 is 00000001 which equals to 1 in integer;
+
   // std::cout << z << " test6" << std::endl;
   ifs.get(test_char);
   std::cout << test_char << " test7" << std::endl;
   std::bitset<8> z3(test_char);
   std::cout << z3 << " test7" << std::endl;
-   EXPECT_EQ(z3, 0xB8);
+  EXPECT_EQ(z3, 0xB8);
+  // z3 is 11011100 which equals to 184(10-base) 0xB8(16-base)
+  // the previous bits are added to be
+  // 00000000 0000000 00000001 11011100 == 440
+  // 0x1B8 (16-base)
+
+//  bool bit;
+//  bit = bis.Getbit;
+//  std::bitset<1> zz(bit);
+//  EXPECT_EQ(bit, true );
+
 
   std::remove(filename.c_str());
 }
@@ -110,15 +129,24 @@ TEST(BStream, outandin) {
       std::ios::binary);
   BinaryInputStream bis(ifs);
   EXPECT_EQ(bis.GetChar(), 0x58);
+  // the hex value for 'X' in ASCII table
   EXPECT_EQ(bis.GetChar(), 0x41);
+  // the hex value for 'X' in ASCII table
   std::bitset<8> z(bis.GetChar());
   EXPECT_EQ(z, 0xFA);
+  // the hex value for 11111010
   std::bitset<8> z1(bis.GetChar());
   EXPECT_EQ(z1, 0xA5);
+  // the hex value for 10100101
   std::bitset<8> z2(bis.GetChar());
   EXPECT_EQ(z2, 0x7B);
+  // the hex value for 01111011
   std::bitset<8> z3(bis.GetChar());
   EXPECT_EQ(z3, 0xA5);
+  // the hex value for 10100101
+
+//  char test_char  = bis.GetChar();
+//  EXPECT_EQ(test_char , 0);
 
 
   //char test_char;
