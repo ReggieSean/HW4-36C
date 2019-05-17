@@ -5,7 +5,7 @@
 
 TEST(PQueue, less) {
   PQueue<int> pq;
-
+  // unsorted push
   pq.Push(42);
   pq.Push(23);
   pq.Push(2);
@@ -21,11 +21,12 @@ TEST(PQueue, less) {
   EXPECT_EQ(pq.Top(), 42);
   pq.Pop();
   EXPECT_EQ(pq.Size(), 0);
+  // Each pop will give the lowest number--highest priority
 }
 
 TEST(PQueue, great) {
   PQueue<int, std::greater<int>> pq;
-
+  // unsorted push
   pq.Push(42);
   pq.Push(23);
   pq.Push(2);
@@ -41,6 +42,7 @@ TEST(PQueue, great) {
   EXPECT_EQ(pq.Top(), 2);
   pq.Pop();
   EXPECT_EQ(pq.Size(), 0);
+  // Each pop will give the highest number--highest priority
 }
 
 class MyClass {
@@ -56,6 +58,7 @@ TEST(PQueue, custom_class) {
   std::vector<MyClass> vec{MyClass(42), MyClass(23), MyClass(2), MyClass(34)};
 
   PQueue<MyClass> pq;
+  // unsorted push
   pq.Push(vec[0]);
   pq.Push(vec[1]);
   pq.Push(vec[2]);
@@ -72,6 +75,7 @@ class MinPointerComparator {
  public:
   bool operator () (const T &lhs, const T &rhs) const {
     return *lhs < *rhs;
+    // use the objects
   }
 };
 
@@ -80,6 +84,7 @@ TEST(PQueue, custom_class_pointer) {
                             new MyClass(2), new MyClass(34)};
 
   PQueue<MyClass*, MinPointerComparator<MyClass*>> pq;
+  // custom comparator on pointer
   pq.Push(vec[0]);
   pq.Push(vec[1]);
   pq.Push(vec[2]);

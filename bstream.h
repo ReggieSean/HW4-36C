@@ -113,8 +113,6 @@ void BinaryOutputStream::FlushBuffer() {
   // Write to output stream
   ofs.put(buffer);
   std::bitset<8> z(buffer);
-  // std::cout << "buffer " << z <<std::endl;
-  // std::cout << buffer << "test buffer" << std::endl;
 
   // Reset buffer
   buffer = 0;
@@ -126,52 +124,26 @@ void BinaryOutputStream::PutBit(bool bit) { //not sure how to test a bit
   buffer <<= 1;
   if (bit)
     buffer |= 1;
-  // std::cout << "a bit is put " << bit <<std::endl;
+
   // If buffer is full, write it
   if (++count == 8)
     FlushBuffer();
 }
 
 void BinaryOutputStream::PutChar(char byte) {
-  // putchar is working fine
-  // bool bit;
-  // for (size_t i = 0; i < 8; i++) {
-  //   bit = (byte >> i) & 1U;
-  //   PutBit(bit);
-  // }
-  // buffer = 0;
-   // bool bit;
+
    for (int i = 0; i < 8; i++){
      PutBit((byte >> (7 - i) & 1));
-   //   if (bit) {
-   //     buffer |= 1 << i;
-   //   } else {
-   //     buffer |= 0 << i;
-   //   }
-   //   count++;
     }
-   // FlushBuffer();
 }
 
 void BinaryOutputStream::PutInt(int word) {
-  /*two potential problems here:
-  even the function is outputing binary data into the file
-  i can not test if they are in the right order,
-  somehow google test always shows the value is 0, I think another
-  way of extracting int from file is needed*/
   char byte;
+  // get the byte and put it into binary form, starting from left most
   for (size_t i = 0; i < sizeof(int); i++){
     byte = (word >> (((sizeof(int)-1)-i) * 8));
-    // std::bitset<8> x(byte);
-    // std::cout << byte << " test" << std::endl;
-    // std::cout << x << " test2" << std::endl;
     PutChar(byte);
   }
-  /*bool bit;
-  for (int i = 0; i < 32; i++) {
-    bit = word >> (31 - i) & 1;
-    PutBit(bit);
-  }*/
 }
 
 #endif  // BSTREAM_H_
