@@ -14,9 +14,11 @@ int main(int argc, char* argv[]) {
     std::cerr << "Error: cannot open zap file " << argv[1] <<std::endl;
     exit(1);
   }
-  std::ofstream ofs(argv[2], std::ios::out | std::ios::trunc | std::ios::binary);
+  std::ofstream ofs(argv[2], std::ios::out |
+    std::ios::trunc | std::ios::binary);
   Huffman::Decompress(ifs, ofs);
-  std::cout << "Decompressed zap file " << argv[1] << " into output file " << argv[2] <<std::endl;
+  std::cout << "Decompressed zap file " << argv[1]
+  << " into output file " << argv[2] <<std::endl;
   ifs.close();
   ofs.close();
   return 0;

@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <utility>
 #include <streambuf>
 #include "bstream.h"
 #include "pqueue.h"
@@ -53,7 +54,8 @@ class Huffman {
 
  private:
   // Helper methods...
-  static std::map<char, int> CountFrequency(std::ifstream& ifs, std::string& all_file);
+  static std::map<char, int> CountFrequency
+  (std::ifstream& ifs, std::string& all_file);
   static void BuildTree(PQueue<HuffmanNode>& HuffTree);
   static void OutputHuffman(HuffmanNode& n, BinaryOutputStream& bos);
   static void BuildCodeTable(HuffmanNode& n, std::map<char, std::string>&
@@ -61,12 +63,14 @@ class Huffman {
   static void OutputSequence(std::string& all_char, std::map<char, std::string>&
      code_table, BinaryOutputStream& bos);
   static void CleanUp(HuffmanNode* n);
-  static HuffmanNode* ReconstructTree(BinaryInputStream& bis);
-  static void WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& bis);
+  static HuffmanNode* ReconstructTree
+  (BinaryInputStream& bis);
+  static void WriteIn(std::ofstream& ofs,
+    HuffmanNode* root, BinaryInputStream& bis);
 };
 
 // To be completed below
-void Huffman::Compress(std::ifstream &ifs, std::ofstream &ofs){
+void Huffman::Compress(std::ifstream &ifs, std::ofstream &ofs) {
   // read the whole file and save it to be a string
   std::string all_char = std::string((std::istreambuf_iterator<char>(ifs)),
   std::istreambuf_iterator<char>());
@@ -96,7 +100,8 @@ void Huffman::Compress(std::ifstream &ifs, std::ofstream &ofs){
   CleanUp(HuffmanTree.Top().right());
 }
 
-std::map<char, int> Huffman::CountFrequency(std::ifstream &ifs, std::string& all_file){
+std::map<char, int> Huffman::CountFrequency(std::ifstream &ifs,
+   std::string& all_file) {
   char temp_char;
   std::map<char, int> freq;
   // loop through every single char
@@ -112,20 +117,22 @@ std::map<char, int> Huffman::CountFrequency(std::ifstream &ifs, std::string& all
   }
   return freq;
 }
-void Huffman::BuildTree(PQueue<HuffmanNode>& HuffTree){
+void Huffman::BuildTree(PQueue<HuffmanNode>& HuffTree) {
   // loop until the there is only the root in the pqueue
   while (HuffTree.Size() != 1) {
-    HuffmanNode* node1 = new HuffmanNode(HuffTree.Top().data(), HuffTree.Top().freq(), HuffTree.Top().left(), HuffTree.Top().right());
+    HuffmanNode* node1 = new HuffmanNode(HuffTree.Top().data(),
+     HuffTree.Top().freq(), HuffTree.Top().left(), HuffTree.Top().right());
     HuffTree.Pop();
-    HuffmanNode* node2 = new HuffmanNode(HuffTree.Top().data(), HuffTree.Top().freq(), HuffTree.Top().left(), HuffTree.Top().right());
+    HuffmanNode* node2 = new HuffmanNode(HuffTree.Top().data(),
+     HuffTree.Top().freq(), HuffTree.Top().left(), HuffTree.Top().right());
     HuffTree.Pop();
     HuffmanNode newNode(0, node1->freq() + node2->freq(), node1, node2);
     HuffTree.Push(newNode);
   }
 }
 
-void Huffman::OutputHuffman(HuffmanNode& n, BinaryOutputStream& bos){
-  // use a preordered way to output every node and its path
+void Huffman::OutputHuffman(HuffmanNode& n, BinaryOutputStream& bos) {
+  // use a preordered trevesal to output every node and its path
   if (n.IsLeaf()) {
     bos.PutBit(1);
     bos.PutChar(n.data());
@@ -138,12 +145,11 @@ void Huffman::OutputHuffman(HuffmanNode& n, BinaryOutputStream& bos){
   if (n.right()) {
     OutputHuffman(*(n.right()), bos);
   }
-
-
 }
 void Huffman::BuildCodeTable(HuffmanNode& n, std::map<char, std::string>&
-   code_table, std::string path){
-  if (n.IsLeaf()){
+  code_table, std::string path) {
+  // recursively loop through all nodes and add information to the code table
+  if (n.IsLeaf()) {
     code_table.insert(std::pair<char, std::string> (n.data(), path));
   } else {
     if (n.left()) {
@@ -157,16 +163,21 @@ void Huffman::BuildCodeTable(HuffmanNode& n, std::map<char, std::string>&
   }
 }
 
-void Huffman::OutputSequence(std::string& all_char, std::map<char, std::string>& code_table, BinaryOutputStream& bos){
-   for (auto ch : all_char) {
-     for (auto bit : code_table.find(ch)->second) {
-        std::string str(1, bit);
-        bos.PutBit(std::stoi(str));
-     }
-   }
+void Huffman::OutputSequence(std::string& all_char, std::map<char, std::string>&
+  code_table, BinaryOutputStream& bos) {
+  // loop through every single char
+  for (auto ch : all_char) {
+    // for each of them find the coresponding sequence
+    // and then convert it to the form where putbit can read
+    for (auto bit : code_table.find(ch)->second) {
+      std::string str(1, bit);
+      bos.PutBit(std::stoi(str));
+    }
+  }
 }
 
-void Huffman::CleanUp(HuffmanNode* n){
+void Huffman::CleanUp(HuffmanNode* n) {
+  // use a preordered trevesal to free all nodes
   if (!n) {
     return;
   }
@@ -177,37 +188,50 @@ void Huffman::CleanUp(HuffmanNode* n){
 
 void Huffman::Decompress(std::ifstream& ifs, std::ofstream& ofs) {
   BinaryInputStream bis(ifs);
+  // recursively rebuild the huffmantree
   HuffmanNode* root = ReconstructTree(bis);
+  // write into the output file
   WriteIn(ofs, root, bis);
+  // free created nodes
   CleanUp(root);
 }
 
-HuffmanNode* Huffman::ReconstructTree(BinaryInputStream& bis){
+HuffmanNode* Huffman::ReconstructTree(BinaryInputStream& bis) {
   HuffmanNode* cur_node;
+  // the path is 0 means it is a internal node
   if (!bis.GetBit()) {
-    cur_node = new HuffmanNode(0, 0, ReconstructTree(bis), ReconstructTree(bis));
+    cur_node = new HuffmanNode(0, 0, ReconstructTree(bis),
+    ReconstructTree(bis));
     return cur_node;
+  // else it is a leaf node
   } else {
     cur_node = new HuffmanNode(bis.GetChar(), 0, nullptr, nullptr);
     return cur_node;
   }
 }
 
-void Huffman::WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& bis) {
+void Huffman::WriteIn(std::ofstream& ofs, HuffmanNode* root,
+  BinaryInputStream& bis) {
   BinaryOutputStream bos(ofs);
+  // read the 32-bit integer from the string
   int size = bis.GetInt();
   HuffmanNode* cur_node;
+  // loop exactly the number of char times
+  // since it tells the exact number of nodes
   for (int i = 0; i < size; i++) {
+    // start from root in each loop
     cur_node = root;
-    while (!cur_node->IsLeaf()){
-      if (bis.GetBit()){
+    // keep looping if the cur_node is not a leaf
+    // if path is 1, go right, otherwise go left
+    while (!cur_node->IsLeaf()) {
+      if (bis.GetBit()) {
         cur_node = cur_node->right();
       } else {
         cur_node = cur_node->left();
       }
     }
-    char ch = cur_node->data();
-    bos.PutChar(ch);
+    // write the leaf node's char into the file
+    bos.PutChar(cur_node->data());
   }
 }
 
