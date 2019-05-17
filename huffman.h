@@ -58,39 +58,40 @@ class Huffman {
   static void OutputHuffman(HuffmanNode& n, BinaryOutputStream& bos);
   static void BuildCodeTable(HuffmanNode& n, std::map<char, std::string>&
      code_table, std::string path);
-  static void BuildSequence(std::string& all_char, std::map<char, std::string>&
+  static void OutputSequence(std::string& all_char, std::map<char, std::string>&
      code_table, BinaryOutputStream& bos);
   static void CleanUp(HuffmanNode* n);
   static HuffmanNode* ReconstructTree(BinaryInputStream& bis);
-  // static void RebuildCodeTable(HuffmanNode* n, std::map<char, std::string>&
-     // code_table, BinaryInputStream, bos);
   static void WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& bis);
 };
 
 // To be completed below
 void Huffman::Compress(std::ifstream &ifs, std::ofstream &ofs){
+  // read the whole file and save it to be a string
   std::string all_char = std::string((std::istreambuf_iterator<char>(ifs)),
   std::istreambuf_iterator<char>());
+  // count each char's frequency
   std::map<char, int> freq = CountFrequency(ifs, all_char);
-  // std::cout << "im here" <<std::endl;
   PQueue<HuffmanNode> HuffmanTree;
+  // push each node into the pqueue
   for (auto itr = freq.begin(); itr != freq.end(); itr++) {
     HuffmanNode cur_node(itr->first, itr->second);
-    // std::cout << itr->first << ' ' << itr->second << std::endl;
-    // std::cout << cur_node.data() << ' ' << cur_node.freq() << std::endl;
     HuffmanTree.Push(cur_node);
   }
-  // std::cout << "im here" <<std::endl;
+  // build the tree
   BuildTree(HuffmanTree);
-  // std::cout << "im here" <<std::endl;
+  // intialize the bos
   BinaryOutputStream bos(ofs);
-  // std::cout << "im here" <<std::endl;
+  // writing the tree into the file
   OutputHuffman(HuffmanTree.Top(), bos);
-  // std::cout << "im here" <<std::endl;
   std::map<char, std::string>code_table;
+  // build code table
   BuildCodeTable(HuffmanTree.Top(), code_table, "");
+  // write the number of character into the file
   bos.PutInt(HuffmanTree.Top().freq());
-  BuildSequence(all_char, code_table, bos);
+  // write sequence of char into the file
+  OutputSequence(all_char, code_table, bos);
+  // delete nodes in the memory
   CleanUp(HuffmanTree.Top().left());
   CleanUp(HuffmanTree.Top().right());
 }
@@ -98,74 +99,43 @@ void Huffman::Compress(std::ifstream &ifs, std::ofstream &ofs){
 std::map<char, int> Huffman::CountFrequency(std::ifstream &ifs, std::string& all_file){
   char temp_char;
   std::map<char, int> freq;
-  // BinaryInputStream bis(ifs);
-  // std::string all_file = std::string((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
-  // while (true) {
-  //   if (ifs.eof()) {
-  //     break;
-  //   }
-  //   // std::cout << "im here" <<std::endl;
-    // temp_char = bis.GetChar();
-    // if (freq.find(temp_char) == freq.end()) {
-    //   freq.insert(std::pavoid CleanUp(HuffmanNode& root);ir<char, int>(temp_char, 1));
-    // } else {
-    //   freq.find(temp_char)->second++; // might need to change
-    // }
-
-  // }
+  // loop through every single char
   for (auto cur_char : all_file) {
     temp_char = cur_char;
+    // the char does not exist in the map yet
     if (freq.find(temp_char) == freq.end()) {
       freq.insert(std::pair<char, int>(temp_char, 1));
+    // find the key and increse its frequency by one
     } else {
-      freq.find(temp_char)->second++; // might need to change
+      freq.find(temp_char)->second++;
     }
   }
   return freq;
 }
 void Huffman::BuildTree(PQueue<HuffmanNode>& HuffTree){
+  // loop until the there is only the root in the pqueue
   while (HuffTree.Size() != 1) {
-    // std::cout << HuffTree.Size() <<std::endl;
     HuffmanNode* node1 = new HuffmanNode(HuffTree.Top().data(), HuffTree.Top().freq(), HuffTree.Top().left(), HuffTree.Top().right());
-    // std::cout << node1->data() <<std::endl;
-    // std::cout << node1->freq() <<std::endl;
     HuffTree.Pop();
     HuffmanNode* node2 = new HuffmanNode(HuffTree.Top().data(), HuffTree.Top().freq(), HuffTree.Top().left(), HuffTree.Top().right());
-    // std::cout << node2->data() <<std::endl;
-    // std::cout << node2->freq() <<std::endl;
     HuffTree.Pop();
     HuffmanNode newNode(0, node1->freq() + node2->freq(), node1, node2);
-    // std::cout << "new " << newNode.data() <<std::endl;
-    // std::cout << "new " << newNode.freq() <<std::endl;
     HuffTree.Push(newNode);
   }
 }
 
 void Huffman::OutputHuffman(HuffmanNode& n, BinaryOutputStream& bos){
-  // std::cout << "new node" <<std::endl;
-  // std::cout << n.data() << ' ' << n.freq() <<std::endl;
+  // use a preordered way to output every node and its path
   if (n.IsLeaf()) {
-    // std::cout << "is leaf" <<std::endl;
-     bos.PutBit(1);
-    // std::cout << "put 1" <<std::endl;
-
+    bos.PutBit(1);
     bos.PutChar(n.data());
-    // std::bitset<8> z(n.data());
-    // std::cout << "put char " << z <<std::endl;
-    // std::cout << "im here1" <<std::endl;
-    // bos.PutChar(n.data());
-    // std::cout << "im here1" <<std::endl;
   } else {
-    // std::cout << "is not leaf" <<std::endl;
-     bos.PutBit(0);
-    // std::cout << "put 0" <<std::endl;
+    bos.PutBit(0);
   }
   if (n.left()) {
-    // std::cout << "checking left" <<std::endl;
     OutputHuffman(*(n.left()), bos);
   }
   if (n.right()) {
-    // std::cout << "checking right" <<std::endl;
     OutputHuffman(*(n.right()), bos);
   }
 
@@ -175,42 +145,24 @@ void Huffman::BuildCodeTable(HuffmanNode& n, std::map<char, std::string>&
    code_table, std::string path){
   if (n.IsLeaf()){
     code_table.insert(std::pair<char, std::string> (n.data(), path));
-    // std::cout << code_table.find(n.data())->first << ':' << code_table.find(n.data())->second <<std::endl;
   } else {
     if (n.left()) {
       BuildCodeTable(*(n.left()), code_table, path.append("0"));
       path.pop_back();
-      // std::cout << path << std::endl;
     }
     if (n.right()) {
       BuildCodeTable(*(n.right()), code_table, path.append("1"));
       path.pop_back();
-      // std::cout << path << std::endl;
     }
   }
 }
 
-void Huffman::BuildSequence(std::string& all_char, std::map<char, std::string>& code_table, BinaryOutputStream& bos){
-  // char ch;
-  // while(true) {
-  //   if (ifs.eof()) {
-  //     break;
-  //   }
-  //   ifs.get(ch);
-  //   std::cout << ch <<std::endl;
+void Huffman::OutputSequence(std::string& all_char, std::map<char, std::string>& code_table, BinaryOutputStream& bos){
    for (auto ch : all_char) {
-     // std::cout << code_table.find(ch)->first << " hello" << std::endl;
      for (auto bit : code_table.find(ch)->second) {
-        // std::cout << bit << std::endl;
         std::string str(1, bit);
         bos.PutBit(std::stoi(str));
      }
-      // std::cout << code_table[ch];
-      // std::string str(1, bit);
-      // std::cout << str <<std::endl;
-      // bos.PutBit(std::stoi(str));
-  // }
-
    }
 }
 
@@ -244,9 +196,6 @@ HuffmanNode* Huffman::ReconstructTree(BinaryInputStream& bis){
 void Huffman::WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& bis) {
   BinaryOutputStream bos(ofs);
   int size = bis.GetInt();
-  std::bitset<32> z(size);
-  std::cout << z << " size" << std::endl;
-  std::cout << size << std::endl;
   HuffmanNode* cur_node;
   for (int i = 0; i < size; i++) {
     cur_node = root;
@@ -258,15 +207,8 @@ void Huffman::WriteIn(std::ofstream& ofs, HuffmanNode* root, BinaryInputStream& 
       }
     }
     char ch = cur_node->data();
-    std::cout << ch << " size" << std::endl;
     bos.PutChar(ch);
   }
 }
-
-
-
-
-
-
 
 #endif  // HUFFMAN_H_
