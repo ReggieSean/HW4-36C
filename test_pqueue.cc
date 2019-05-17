@@ -1,5 +1,5 @@
-#include <functional>
 #include <gtest/gtest.h>
+#include <functional>
 
 #include "pqueue.h"
 
@@ -47,7 +47,7 @@ TEST(PQueue, great) {
 
 class MyClass {
  public:
-  MyClass(int n) : n_(n) {}
+  explicit MyClass(int n) : n_(n) {}
   bool operator < (const MyClass &mc) const { return n_ < mc.n_; }
   int n() { return n_; }
  private:
