@@ -1,7 +1,8 @@
+#include <gtest/gtest.h>
 #include <cstdio>
 #include <fstream>
 
-#include <gtest/gtest.h>
+
 
 #include "bstream.h"
 
@@ -33,12 +34,12 @@ TEST(BStream, input) {
   EXPECT_EQ(bis.GetBit(), 1);
 
   temp_char = bis.GetChar();
-  //std::cout << temp_char << std::endl;
+  // std::cout << temp_char << std::endl;
 
-  EXPECT_EQ(temp_char, 0x62); // 01100010
-  EXPECT_EQ(bis.GetChar(), 0x42); // 01000010
+  EXPECT_EQ(temp_char, 0x62);  // 01100010
+  EXPECT_EQ(bis.GetChar(), 0x42);  // 01000010
   EXPECT_EQ(bis.GetBit(), 1);
-  EXPECT_EQ(bis.GetInt(), 0x58400276); // 01011000010000000000001001110110
+  EXPECT_EQ(bis.GetInt(), 0x58400276);  // 01011000010000000000001001110110
 // 1110110 00000010 01000000 01011000 : 1979859032
 // 1011000 01000000 00000010 01110110 : 1480589942
 
@@ -85,9 +86,9 @@ TEST(BStream, output) {
   // z2 is 00000001 which equals to 1 in integer;
 
   ifs.get(test_char);
-  //std::cout << test_char << " test7" << std::endl;
+  // std::cout << test_char << " test7" << std::endl;
   std::bitset<8> z3(test_char);
-  //std::cout << z3 << " test7" << std::endl;
+  // std::cout << z3 << " test7" << std::endl;
   EXPECT_EQ(z3, 0xB8);
   // z3 is 11011100 which equals to 184(10-base) 0xB8(16-base)
   // the previous bits are added to be
