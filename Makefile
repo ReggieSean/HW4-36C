@@ -12,4 +12,4 @@ zap: zap.cc huffman.h bstream.h pqueue.h
 unzap: unzap.cc huffman.h bstream.h pqueue.h
 	g++ -Wall -Werror -g -std=c++11 -o unzap unzap.cc
 clean:
-	rm -f *.o test_pqueue test_bstream zap unzap.cc
+	rm -f *.o test_pqueue test_bstream zap unzap
