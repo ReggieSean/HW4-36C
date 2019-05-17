@@ -55,7 +55,7 @@ bool BinaryInputStream::GetBit() {
 char BinaryInputStream::GetChar() {
   char byte = 0;
   for (int i = 0; i < 8; i++) {
-    //byte = byte << 1;
+    // byte = byte << 1;
     byte |= GetBit() << (7-i);
   }
   return byte;
@@ -94,7 +94,7 @@ class BinaryOutputStream {
 BinaryOutputStream::BinaryOutputStream(std::ofstream &ofs) : ofs(ofs) { }
 
 BinaryOutputStream::~BinaryOutputStream() {
-	Close();
+  Close();
 }
 
 void BinaryOutputStream::Close() {
@@ -119,7 +119,7 @@ void BinaryOutputStream::FlushBuffer() {
   count = 0;
 }
 
-void BinaryOutputStream::PutBit(bool bit) { //not sure how to test a bit
+void BinaryOutputStream::PutBit(bool bit) {
   // Make some space and add bit to buffer
   buffer <<= 1;
   if (bit)
@@ -131,16 +131,16 @@ void BinaryOutputStream::PutBit(bool bit) { //not sure how to test a bit
 }
 
 void BinaryOutputStream::PutChar(char byte) {
-
-   for (int i = 0; i < 8; i++){
+  // put the bits 8 times from left most
+  for (int i = 0; i < 8; i++) {
      PutBit((byte >> (7 - i) & 1));
-    }
+  }
 }
 
 void BinaryOutputStream::PutInt(int word) {
   char byte;
   // get the byte and put it into binary form, starting from left most
-  for (size_t i = 0; i < sizeof(int); i++){
+  for (size_t i = 0; i < sizeof(int); i++) {
     byte = (word >> (((sizeof(int)-1)-i) * 8));
     PutChar(byte);
   }
