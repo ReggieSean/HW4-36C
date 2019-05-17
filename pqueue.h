@@ -5,6 +5,7 @@
 #include <cassert>
 #include <functional>
 #include <vector>
+#include <utility>
 
 template <typename T, typename C = std::less<T>>
 class PQueue {
@@ -104,7 +105,7 @@ void PQueue<T, C>::PercolateDown(size_t n) {
   if (IsNode(RightChild(n)) && IsNode(LeftChild(n))) {
     // both nodes can be compared
     if (CompareNodes(LeftChild(n), n) && CompareNodes(RightChild(n), n)) {
-      //both child nodes are less than the parent
+      // both child nodes are less than the parent
       if (CompareNodes(RightChild(n), LeftChild(n))) {
         std::swap(items[n], items[RightChild(n)]);
         PercolateDown(RightChild(n));
@@ -125,7 +126,7 @@ void PQueue<T, C>::PercolateDown(size_t n) {
       return;
     }
   } else if (IsNode(LeftChild(n))) {
-    //only left child can be compared
+    // only left child can be compared
     if (CompareNodes(LeftChild(n), n)) {
       std::swap(items[n], items[LeftChild(n)]);
       PercolateDown(LeftChild(n));
@@ -134,8 +135,8 @@ void PQueue<T, C>::PercolateDown(size_t n) {
       return;
     }
   } else if (IsNode(RightChild(n))) {
-    //only right child can be compared
-    if (CompareNodes(RightChild(n), n)){
+    // only right child can be compared
+    if (CompareNodes(RightChild(n), n)) {
       std::swap(items[n], items[RightChild(n)]);
       PercolateDown(RightChild(n));
     } else {
@@ -143,7 +144,7 @@ void PQueue<T, C>::PercolateDown(size_t n) {
       return;
     }
   } else {
-    //one node
+    // one node
     return;
   }
 }
