@@ -43,6 +43,7 @@ TEST(PQueue, lessforallnode) {
   EXPECT_EQ(pq.Top(), 42);
   pq.Pop();
   EXPECT_EQ(pq.Size(), 0);
+  EXPECT_THROW(pq.Top(), std::exception);
   // Each pop will give the lowest number--highest priority
 }
 
@@ -87,6 +88,7 @@ TEST(PQueue, greatforallnode) {
   EXPECT_EQ(pq.Top(), 1);
   pq.Pop();
   EXPECT_EQ(pq.Size(), 0);
+  EXPECT_THROW(pq.Top(), std::exception);
   // Each pop will give the highest number--highest priority
 }
 
