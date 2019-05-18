@@ -2,10 +2,9 @@
 #include <functional>
 
 #include "pqueue.h"
-
 TEST(PQueue, less) {
   PQueue<int> pq;
-  // unsorted push
+
   pq.Push(42);
   pq.Push(23);
   pq.Push(2);
@@ -15,6 +14,29 @@ TEST(PQueue, less) {
   EXPECT_EQ(pq.Size(), 4);
   pq.Pop();
   EXPECT_EQ(pq.Top(), 23);
+}
+
+TEST(PQueue, lessforallnode) {
+  PQueue<int> pq;
+  // unsorted push
+  pq.Push(42);
+  pq.Push(23);
+  pq.Push(2);
+  pq.Push(10);
+  pq.Push(34);
+  pq.Push(1);
+  pq.Push(30);
+
+  EXPECT_EQ(pq.Top(), 1);
+  EXPECT_EQ(pq.Size(), 7);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 2);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 10);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 23);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 30);
   pq.Pop();
   EXPECT_EQ(pq.Top(), 34);
   pq.Pop();
@@ -26,7 +48,7 @@ TEST(PQueue, less) {
 
 TEST(PQueue, great) {
   PQueue<int, std::greater<int>> pq;
-  // unsorted push
+
   pq.Push(42);
   pq.Push(23);
   pq.Push(2);
@@ -36,10 +58,33 @@ TEST(PQueue, great) {
   EXPECT_EQ(pq.Size(), 4);
   pq.Pop();
   EXPECT_EQ(pq.Top(), 34);
+}
+
+TEST(PQueue, greatforallnode) {
+  PQueue<int, std::greater<int>> pq;
+  // unsorted push
+  pq.Push(42);
+  pq.Push(23);
+  pq.Push(2);
+  pq.Push(10);
+  pq.Push(34);
+  pq.Push(1);
+  pq.Push(30);
+
+  EXPECT_EQ(pq.Top(), 42);
+  EXPECT_EQ(pq.Size(), 7);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 34);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 30);
   pq.Pop();
   EXPECT_EQ(pq.Top(), 23);
   pq.Pop();
+  EXPECT_EQ(pq.Top(), 10);
+  pq.Pop();
   EXPECT_EQ(pq.Top(), 2);
+  pq.Pop();
+  EXPECT_EQ(pq.Top(), 1);
   pq.Pop();
   EXPECT_EQ(pq.Size(), 0);
   // Each pop will give the highest number--highest priority

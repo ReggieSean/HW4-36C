@@ -63,6 +63,8 @@ size_t PQueue<T, C>::Size() {
 
 template<typename T, typename C>
 T &PQueue<T, C>::Top() {
+  if (!Size())
+    throw std::underflow_error("Empty priority queue!");
   return items[Root()];
 }
 
@@ -134,15 +136,15 @@ void PQueue<T, C>::PercolateDown(size_t n) {
       // at right pos
       return;
     }
-  } else if (IsNode(RightChild(n))) {
-    // only right child can be compared
-    if (CompareNodes(RightChild(n), n)) {
-      std::swap(items[n], items[RightChild(n)]);
-      PercolateDown(RightChild(n));
-    } else {
-      // at right pos
-      return;
-    }
+   } else if (IsNode(RightChild(n))) {
+//    // only right child can be compared
+//    if (CompareNodes(RightChild(n), n)) {
+//      std::swap(items[n], items[RightChild(n)]);
+//      PercolateDown(RightChild(n));
+//    } else {
+//      // at right pos
+//      return;
+//    }
   } else {
     // one node
     return;
