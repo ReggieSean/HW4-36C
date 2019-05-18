@@ -136,7 +136,7 @@ void PQueue<T, C>::PercolateDown(size_t n) {
       // at right pos
       return;
     }
-   } else if (IsNode(RightChild(n))) {
+  } else if (IsNode(RightChild(n))) {
 //    // only right child can be compared
 //    if (CompareNodes(RightChild(n), n)) {
 //      std::swap(items[n], items[RightChild(n)]);
